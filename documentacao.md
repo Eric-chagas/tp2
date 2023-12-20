@@ -260,17 +260,13 @@ public class Operacoes {
 }
 
 public class Recibo {
+    private Calculadora calculadora = new Calculadora(10, 20);
 
-    public static void main(String[] args) {
-
-        private Calculadora calculadora = new Calculadora(10, 20);
-
-        public static void imprimeRecibo() {
-            System.out.println(Operacoes.somar(calculadora.getValor1(), calculadora.getValor2()));
-            System.out.println(Operacoes.subtrair(calculadora.getValor1(), calculadora.getValor2()));
-            System.out.println(Operacoes.multiplicar(calculadora.getValor1(), calculadora.getValor2()));
-            System.out.println(Operacoes.dividir(calculadora.getValor1(), calculadora.getValor2()));
-        }
+    public static void imprimeRecibo() {
+        System.out.println(Operacoes.somar(calculadora.getValor1(), calculadora.getValor2()));
+        System.out.println(Operacoes.subtrair(calculadora.getValor1(), calculadora.getValor2()));
+        System.out.println(Operacoes.multiplicar(calculadora.getValor1(), calculadora.getValor2()));
+        System.out.println(Operacoes.dividir(calculadora.getValor1(), calculadora.getValor2()));
     }
 }
 
@@ -282,9 +278,102 @@ public class Recibo {
 | -- | -- | -- |
 | A ausência de duplicidades refere-se à eliminação de código redundante. Cada parte do código deve ter uma única representação, evitando repetições que aumentam a dificuldade de manutenção | **Duplicated Code (Código Duplicado)**: Duplicação de código é um mau cheiro significativo. Refatorações como Extract Method ou Extract Class podem ser aplicadas para eliminar duplicações | **Extrair Método / Extrair Classe**: Para eliminar duplicações de código, identificando trechos semelhantes e criando métodos ou classes compartilhadas |
 
+## Exemplo de implementação em código
+
+
+```java
+
+// Codigo com duplicidade de codigo: Ambos os metodos hello1 e hello2 realizam uma funcao muito parecida, que consiste em
+// imprimir "Hello world!" no std output. Eh um exemplo simples em que fica evidente que esse codigo pode ser refatorado
+// de modo a implementar a reutilizacao e reduzir a duplicidade
+
+public class Hello {
+    public void hello1() {
+        System.out.println("Olá, mundo!");
+        System.out.println("Olá, mundo!");
+        System.out.println("Olá, mundo!");
+    }
+
+    public void hello2() {
+        System.out.println("Olá, mundo!");
+    }
+}
+
+// Código refatorado: Agora tanto hello1 quanto hello2 apenas reutilizam o metodo dedicado printHello() e hello1 apenas
+// o chama em um loop de 3 repeticoes, que eh mais um exemplo de reducao da duplicidade de codigo que existia anteriormente
+
+public class Hello {
+    public void hello1() {
+        for(int i = 0; i < 3; i++) {
+            printHello();
+        }
+    }
+
+    public void hello2() {
+        printHello();
+    }
+
+    private static void printHello() {
+        System.out.println("Olá, mundo!");
+    }
+}
+
+public class Hello2 {
+
+    public static void main(String[] args) {
+        printHello();
+    }
+}
+
+```
 
 ### Característica 5: Boa Documentação
 
 | Descrição da Característica | Relação com Maus-Cheiros de Código de Martin Fowler | Operação de Refatoração |
 | -- | -- | -- |
 | Boa documentação no código ajuda na compreensão e manutenção. Comentários claros, nomes de variáveis significativos e documentação de código facilitam o entendimento do propósito e funcionamento de cada componente | **Comments (Comentários em Excesso)**: Código excessivamente comentado pode indicar falta de clareza. Refatorações podem envolver a melhoria da legibilidade do código, tornando os comentários menos necessários | **Renomear Variáveis / Extrair Método**: Para melhorar a clareza do código, escolhendo nomes significativos para variáveis e métodos. Isso reduz a necessidade de comentários explicativos |
+
+## Exemplo de implementação em código
+
+
+```java
+
+// Codigo com documentacao excessiva: Os nomes das variaveis e dos metodos nao sao nada intuitivos e 
+// consequentemente demandam uma quantidade alta de comentarios descritivos
+
+public class ClasseXYZXPTOn23 {
+    // Metodo lp (de loop) que itera 3 vezes e printa a iteracao incrementada com 1
+    public static void lp() {
+        // Declara uma variável inteira chamada `i` e a inicializa com o valor 0.
+        int i = 0;
+
+        // Define a condição de parada do loop.
+        // O loop continuará a ser executado enquanto o valor de `i` for menor que 3.
+        while (i < 3) {
+
+            // Atualiza o valor da variável `i` em 1 após cada iteração do loop.
+            i++;
+
+            // Imprime a mensagem "Iteração " + (i + 1) no console.
+            System.out.println("Iteração " + (i + 1));
+        }
+    }
+}
+
+// Código refatorado: Com nomes mais auto descritivos tanto para as variaveis quanto para a classe e metodo
+// nao existe a necessidade da quantidade elevada de comentarios no meio do codigo
+
+public class ClasseIteradora {
+
+    public static void itera3Vezes(String[] args) {
+        // Declara e inicializa uma variável `iteracao` com o valor 0.
+        int iteracao = 0;
+
+        // Itera 3 vezes, imprimindo a mensagem "Iteração " + iteração incrementada com 1 no console.
+        for (iteracao = 0; iteracao < 3; iteracao++) {
+            System.out.println("Iteração " + iteração + 1);
+        }
+    }
+}
+
+```
