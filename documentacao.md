@@ -6,12 +6,153 @@
 | -- | -- | -- |
 | A simplicidade em um projeto de software refere-se à ausência de complexidade desnecessária. Um código simples é fácil de entender, manter e modificar. Ele possui uma estrutura clara e direta, evitando abstrações complicadas e lógica desnecessariamente intrincada |  - **Long Method (Método Longo)**: Métodos extensos podem ser complexos e difíceis de compreender. A simplificação envolve a extração de métodos menores para reduzir o tamanho. <br> - **Complex Conditional Statements (Declarações Condicionais Complexas)**: Simplificar condicionais complexos pode envolver a decomposição dessas estruturas em métodos menores ou a aplicação de técnicas como Decompose Conditional | **Extrair Método:** Identificar trechos de código complexos e transformá-los em métodos menores, cada um realizando uma tarefa específica. Isso reduz a complexidade e facilita a compreensão |
 
+## Exemplo de implementação em código
+
+```java
+
+// Código sem simplificação: Utiliza um algoritmo simples (e custoso) para verificar se o numero eh primo
+
+public class Classe1 {
+
+    public static void main(String[] args) {
+        int valor = 10;
+
+        if (valor > 1) {
+            for (int i = 2; i < valor; i++) {  
+                if (valor % i == 0) { 
+                    System.out.println("Não é primo...");
+                    return;
+                }
+            }
+
+            System.out.println("É primo!");
+        } else {
+            System.out.println("Não é primo...");
+        }
+    }
+}
+
+// Código simplificado: Utiliza o mesmo algoritmo para verificar se o numero eh primo, porem em um metodo dedicado
+// que apenas eh chamado no metodo principal
+
+public class Classe1 {
+
+    public static void main(String[] args) {
+        int valor = 10;
+
+        if (valor > 1) {
+            if (ehPrimo(valor)) {
+                System.out.println("É primo!");
+            } else {
+                System.out.println("Não é primo...");
+            }
+        } else {
+            System.out.println("Não é primo...");
+        }
+    }
+
+    private static boolean ehPrimo(int valor) {
+        for (int i = 2; i * i < valor; i++) {
+            if (valor % i == 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+} 
+
+```
+
 
 ### Característica 2: Boas Interfaces
 
 | Descrição da Característica | Relação com Maus-Cheiros de Código de Martin Fowler | Operação de Refatoração |
 | -- | -- | -- |
 |Boas interfaces em um projeto de software referem-se à forma como os diferentes módulos, classes e componentes se comunicam. Interfaces claras e bem definidas facilitam a interação entre partes do sistema, promovendo a reutilização e a compreensão | **Inappropriate Intimacy (Intimidade Inadequada):** Classes que se comunicam em excesso podem indicar uma falta de clareza nas interfaces. Refatorações como Move Method ou Move Field podem ser aplicadas para melhorar a situação.| **Mover Método / Mover Campo:** Para reduzir a intimidade inadequada entre duas classes, movendo métodos ou campos para uma classe mais apropriada. Isso ajuda a definir interfaces mais claras.|
+
+## Exemplo de implementação em código
+
+```java
+
+// Código com intimidade inadequada: Classe2 depende de imprimir() da Classe1, o que pode levar a 
+// ambiguidade nos resultados da impressao e acesso desnecessario de classes externas a metodos da Classe1
+
+public class Classe1 {
+
+    private int valor;
+
+    public Classe1(int valor) {
+        this.valor = valor;
+    }
+
+    public int getValor() {
+        return valor;
+    }
+
+    public void setValor(int valor) {
+        this.valor = valor;
+    }
+
+    public void imprimir() {
+        System.out.println("O valor é " + valor);
+    }
+}
+
+public class Classe2 {
+
+    public static void main(String[] args) {
+        Classe1 classe1 = new Classe1(10);
+
+        classe1.imprimir();
+
+        classe1.setValor(20);
+
+        classe1.imprimir();
+    }
+}
+
+// Código refatorado: Com o metodo imprimirClasse1 em um metodo dedicado em uma classe separada, Classe2 agora
+// nao acessa mais diretamente metodos internos de Classe1 diretamente
+
+public class Classe1 {
+
+    private int valor;
+
+    public Classe1(int valor) {
+        this.valor = valor;
+    }
+
+    public int getValor() {
+        return valor;
+    }
+
+    public void setValor(int valor) {
+        this.valor = valor;
+    }
+}
+
+public class ImprimirClasse1 {
+
+    public static void imprimir(Classe1 classe1) {
+        System.out.println("O valor é " + classe1.getValor());
+    }
+}
+
+public class Classe2 {
+
+    public static void main(String[] args) {
+        Classe1 classe1 = new Classe1(10);
+
+        ImprimirClasse1.imprimir(classe1);
+
+        classe1.setValor(20);
+
+        ImprimirClasse1.imprimir(classe1);
+    }
+}
+
+```
 
 
 ### Característica 3: Modularidade (Baixo Acoplamento e Alta Coesão)
@@ -20,6 +161,120 @@
 | -- | -- | -- |
 |Modularidade refere-se à capacidade de dividir o sistema em módulos independentes. Baixo acoplamento significa que esses módulos são pouco dependentes entre si, enquanto alta coesão significa que os elementos dentro de um módulo estão fortemente relacionados|**Feature Envy (Inveja de Recursos):** Métodos que frequentemente acessam dados de outras classes podem indicar acoplamento inadequado. A refatoração pode envolver o movimento desses métodos para as classes apropriadas.|**Mover Método:** Para resolver o problema de Feature Envy, movendo métodos para a classe correta e reduzindo o acoplamento entre classes|
 
+## Exemplo de implementação em código
+
+
+```java
+
+// Codigo que define uma classe Calculadora com quatro métodos.
+// Todos esses quatro métodos acessam os campos valor1 e valor2 da classe Calculadora e dependem da
+// implementacao da classe como um todo
+
+public class Calculadora {
+
+    private int valor1;
+    private int valor2;
+
+    public Calculadora(int valor1, int valor2) {
+        this.valor1 = valor1;
+        this.valor2 = valor2;
+    }
+
+    public int somar() {
+        return valor1 + valor2;
+    }
+
+    public int subtrair() {
+        return valor1 - valor2;
+    }
+
+    public int multiplicar() {
+        return valor1 * valor2;
+    }
+
+    public int dividir() {
+        return valor1 / valor2;
+    }
+}
+
+public class Recibo {
+
+    public static void main(String[] args) {
+        Calculadora calculadora = new Calculadora(10, 20);
+
+        System.out.println(calculadora.somar());
+        System.out.println(calculadora.subtrair());
+        System.out.println(calculadora.multiplicar());
+        System.out.println(calculadora.dividir());
+    }
+}
+
+// Código refatorado: Com os quatro metodos de operacoes na classe dedicada e separada Operacoes, agora
+// outras classes podem utilizar os metodos sem conhecer o funcionamento interno de Calculadora por completo
+// Alem de manter a coesao utilizando getters e setters ao inves de acesso direto a valor1 e valor2 
+
+public class Calculadora {
+
+    private int valor1;
+    private int valor2;
+
+    public Calculadora(int valor1, int valor2) {
+        this.valor1 = valor1;
+        this.valor2 = valor2;
+    }
+    
+    public int getValor1() {
+        return valor1;
+    }
+
+    public void setValor1(int valor) {
+        this.valor1 = valor;
+    }
+
+    public int getValor2() {
+        return valor1;
+    }
+
+    public void setValor2(int valor) {
+        this.valor1 = valor;
+    }
+}
+
+public class Operacoes {
+
+    public static int somar(int valor1, int valor2) {
+        return valor1 + valor2;
+    }
+
+    public static int subtrair(int valor1, int valor2) {
+        return valor1 - valor2;
+    }
+
+    public static int multiplicar(int valor1, int valor2) {
+        return valor1 * valor2;
+    }
+
+    public static int dividir(int valor1, int valor2) {
+        return valor1 / valor2;
+    }
+}
+
+public class Recibo {
+
+    public static void main(String[] args) {
+
+        private Calculadora calculadora = new Calculadora(10, 20);
+
+        public static void imprimeRecibo() {
+            System.out.println(Operacoes.somar(calculadora.getValor1(), calculadora.getValor2()));
+            System.out.println(Operacoes.subtrair(calculadora.getValor1(), calculadora.getValor2()));
+            System.out.println(Operacoes.multiplicar(calculadora.getValor1(), calculadora.getValor2()));
+            System.out.println(Operacoes.dividir(calculadora.getValor1(), calculadora.getValor2()));
+        }
+    }
+}
+
+```
 
 ### Característica 4: Ausência de Duplicidades
 
