@@ -211,7 +211,7 @@ public class Recibo {
 
 // Código refatorado: Com os quatro metodos de operacoes na classe dedicada e separada Operacoes, agora
 // outras classes podem utilizar os metodos sem conhecer o funcionamento interno de Calculadora por completo
-// Alem de manter a coesao utilizando getters e setters ao inves de acesso direto a valor1 e valor2 
+// Alem de manter a coesao utilizando getters ao inves de acesso direto a valor1 e valor2 
 
 public class Calculadora {
 
@@ -227,16 +227,8 @@ public class Calculadora {
         return valor1;
     }
 
-    public void setValor1(int valor) {
-        this.valor1 = valor;
-    }
-
     public int getValor2() {
         return valor1;
-    }
-
-    public void setValor2(int valor) {
-        this.valor1 = valor;
     }
 }
 
@@ -315,13 +307,6 @@ public class Hello {
 
     private static void printHello() {
         System.out.println("Olá, mundo!");
-    }
-}
-
-public class Hello2 {
-
-    public static void main(String[] args) {
-        printHello();
     }
 }
 
